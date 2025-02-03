@@ -1,3 +1,4 @@
+pip install -r requirements.txt
 from google.oauth2 import service_account
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
@@ -10,12 +11,14 @@ import tempfile
 import whisper
 import warnings
 import asyncio
+import os
+import json
 #Used to reduce the runtime error
 warnings.filterwarnings("ignore", category=UserWarning, message="Examining the path of torch.classes raised.*")
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 #I am setting credentials
-credentials_path = 'tough-dreamer-449219-p2-6a5c6c7ee6a3.json'
-credentials = service_account.Credentials.from_service_account_file(credentials_path)
+json_content = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
+credentials = service_account.Credentials.from_service_account_info(json.loads(json_content))
 uploaded_file = st.file_uploader("Upload your PDF file:", type="pdf")
 #Asking the user the upload the pdf file of 200 MB limit
 if uploaded_file:
