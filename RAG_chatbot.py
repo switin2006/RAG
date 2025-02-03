@@ -1,4 +1,9 @@
-pip install -r requirements.txt
+!pip install -q --upgrade google-generativeai langchain-google-genai  langchain-community
+!pip install git+https://github.com/openai/whisper.git
+!pip install google-auth
+!pip install faiss-cpu
+!pip install edge-tts
+!pip install streamlit
 from google.oauth2 import service_account
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
