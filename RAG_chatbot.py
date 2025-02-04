@@ -11,7 +11,8 @@ import whisper
 import warnings
 import asyncio
 import json
-
+from IPython.display import Audio
+import edge_tts
 # Suppress warnings
 warnings.filterwarnings("ignore", category=UserWarning, message="Examining the path of torch.classes raised.*")
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -66,9 +67,9 @@ if uploaded_file:
                 query = transcription["text"]
                 st.write("🎤 You said:", query)
             else:
-                # Handle text input
+                
                 query = text_query 
-            # Common processing for both input types
+           
             retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
             qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever)
             response = qa_chain.invoke(query)
@@ -93,15 +94,12 @@ if uploaded_file:
                 try:
                     asyncio.run(generate_speech())
                     if os.path.exists("human_like_audio.mp3"):
-                        st.audio("human_like_audio.mp3", autoplay=True)
+                        st.audio("human_like_audio.mp3", autoplay=False)
                 except Exception as e:
-                    st.error(f"🔇 Error generating speech: {e}")
+                    st.error(f"Error generating speech: {e}")
 
         except Exception as e:
-            if "429" in str(e):
-                st.error("⚠️ API quota exceeded. Please try again later or check your Google Cloud quota.")
-            else:
-                st.error(f"❌ An error occurred: {e}")
+            st.error(f"❌ An error occurred: {e}")
                 
                   
            
