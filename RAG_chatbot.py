@@ -83,9 +83,9 @@ if uploaded_file:
                 text = response["result"]
                 text = text.replace("**", " ").replace("*", " ").replace("_", " ")
                 
-                VOICE = "en-US-DavidNeural"
-                RATE = "+5%"
-                PITCH = "+10Hz"
+                VOICE = "en-US-ChristopherNeural"
+                RATE = "+10%"
+                PITCH = "+5Hz"
 
                 async def generate_speech():
                     communicate = edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH)
