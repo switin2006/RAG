@@ -54,7 +54,7 @@ if uploaded_file:
     vectorstore = FAISS.from_documents(documents, embeddings)
     with st.form("my_form"):
         st.markdown("### 🎤 Record Your Message or Type Your Query")
-        audio_record = st.audio_input("🎙️ Record your message:")
+        Audio_record = st.audio_input("🎙️ Record your message:")
         text_query = st.text_area("✍️ Or type your query here:")
         submitted = st.form_submit_button("🚀 Submit")
               
