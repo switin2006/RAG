@@ -75,7 +75,7 @@ if uploaded_file:
                       
                       temp_file.write(Audio_record.read())
                 
-                transcription =whisper.load_model("medium").transcribe(temp_file_path,,language="en")
+                transcription =whisper.load_model("medium").transcribe(temp_file_path,language="en")
                 query=transcription["text"]
                 st.write(query)
                 retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
