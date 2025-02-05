@@ -78,9 +78,14 @@ if uploaded_file:
                 intelligently infer or expand upon related concepts. If you cannot infer, say: 
                 *"I couldn't find relevant information in the provided documents, but here’s what I can suggest based on my reasoning."*
                 
+               **Context (from documents):**
+                {context}
+            
                 **User Query:** {question}
+            
+                **Answer:**
                 """,
-                input_variables=["question"]
+                input_variables=["context", "question"]
             )
   
             retriever = vectorstore.as_retriever(search_kwargs={"k": 8},similarity_score_threshold=0.7)
