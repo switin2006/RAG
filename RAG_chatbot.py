@@ -4,6 +4,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.prompts import PromptTemplate
 import streamlit as st
 import os
 import tempfile
@@ -69,9 +70,18 @@ if uploaded_file:
             else:
                 
                 query = text_query 
-           
+
+            prompt_template = PromptTemplate(
+                template="""
+                You are an intelligent AI assistant that provides the most detailed and helpful responses using ONLY the information from the given documents. 
+                Be creative in how you structure your answer, ensuring clarity and completeness. Avoid adding any external knowledge.
+                
+                User Query: {question}
+                """,
+                input_variables=["question"],
+            )
             retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
-            qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever)
+            qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever,chain_type_kwargs={"prompt": prompt_template})
             response = qa_chain.invoke(query)
 
             # Display response
