@@ -83,7 +83,7 @@ if uploaded_file:
                 input_variables=["question"]
             )
   
-            retriever = vectorstore.as_retriever(search_kwargs={"k": 8},"similarity_score_threshold": 0.7)
+            retriever = vectorstore.as_retriever(search_kwargs={"k": 8},similarity_score_threshold: 0.7)
             qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever,chain_type_kwargs={"prompt": prompt_template})
             response = qa_chain.invoke(query)
 
