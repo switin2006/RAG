@@ -69,8 +69,8 @@ if uploaded_file:
                 st.write("🎤 You said:", query)
             else:
                 
-                query = text_query 
-            custom_prompt = PromptTemplate(
+                query = text_query
+            prompt_template= PromptTemplate(
                 template="""
                 You are an intelligent AI assistant that prioritizes answering based on the given documents. 
                 However, use your own **creativity, reasoning, and knowledge** to provide **well-structured, 
