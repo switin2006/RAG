@@ -41,8 +41,8 @@ if uploaded_file:
     text_1 = "\n".join([doc.page_content for doc in documents])
     
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=50
+        chunk_size=1000,
+        chunk_overlap=100
     )
     chunks = text_splitter.split_text(text_1)
     
@@ -70,17 +70,20 @@ if uploaded_file:
             else:
                 
                 query = text_query 
-
-            prompt_template = PromptTemplate(
+            custom_prompt = PromptTemplate(
                 template="""
-                You are an intelligent AI assistant that provides the most detailed and helpful responses using ONLY the information from the given documents. 
-                Be creative in how you structure your answer, ensuring clarity and completeness. Avoid adding any external knowledge.
+                You are an intelligent AI assistant that prioritizes answering based on the given documents. 
+                However, use your own **creativity, reasoning, and knowledge** to provide **well-structured, 
+                insightful, and engaging** responses when relevant. If the exact answer is not in the documents, 
+                intelligently infer or expand upon related concepts. If you cannot infer, say: 
+                *"I couldn't find relevant information in the provided documents, but here’s what I can suggest based on my reasoning."*
                 
-                User Query: {question}
+                **User Query:** {question}
                 """,
-                input_variables=["question"],
+                input_variables=["question"]
             )
-            retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+  
+            retriever = vectorstore.as_retriever(search_kwargs={"k": 8},"similarity_score_threshold": 0.7)
             qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever,chain_type_kwargs={"prompt": prompt_template})
             response = qa_chain.invoke(query)
 
