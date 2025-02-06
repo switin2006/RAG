@@ -78,7 +78,7 @@ if uploaded_file:
                 If the exact answer is *not in the documents*, you may:  
                 - *Infer* a reasonable answer only if there is a strong logical connection to the context.  
                 - *Expand* on related concepts *only if clearly relevant*.  
-                - Otherwise, respond with:  
+                - Otherwise, answer using general knowledge** respond with:  
                   "I couldn’t find relevant information in the provided documents. However, based on my general knowledge, here’s what I can suggest."  
                 
                 ### *Context (from documents):*  
