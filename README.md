@@ -1,1 +1,16 @@
 # RAG
+Task Description-
+Here I created this RAG Chatbot using Langchain, an open-source-frame work (which basically helps us in integration of the AI models into applications)
+I referred the [Langchain official documentaion](https://python.langchain.com/docs/introduction/) for using it's functions and had also gone through some [Youtube vedios](https://www.youtube.com/watch?v=1bUy-1hGZpI&t=126s) for getting a clear idea.
+So First we need to load data and convert it to an embedding using a vector embedding model.Here i Took the data as a input from the user and used [PyPDFLoader](https://python.langchain.com/docs/integrations/document_loaders/pypdfloader/) to load the data and the LLM i used was gemini so i used the Embedding model of the same.
+ I also spitted the data into chunks using charrecter splitter from Langchain.
+In the Later Part of the code i used FIASS method to create vector store of the data loaded and used the similarity search with adding appropraite threshold value to retrieve the relavent documents 
+based upon the query.
+I also used a function called RetrivalQA which is an inbuilt function in Langchain which helps in reduction of lot of mannual tasks such as Converting query in embedding,searching the appropriate docs and also sending them into out LLM model.
+Intailly i did not gave any prompt template but later in the expermenting stage fiund out that giving RAG based prompts Can help us in giving good responses and Also i suggested the model to be a bit creative on topics found relavent in the docs(as per the query) and also Made to strict if the topic is completely irrelevant.
+Later My main focus was on Adding the voice features in the model so i used Whisper by open-AI for converting speech to text and used microsoft's Edge tts model.I choosed these by doing a bit research about them in the internet.
+So I loaded the small model from Whisper since if i was loading the medium or higher my streamlit app was getting timed out and it appeared to be pretty fine.
+Later when my base code was ready I tried integrating it Streamlit by taking use of GPT and referring it's documentaion.
+I also checked the responses by varying the chunck paramerter and modifying the prompt template 
+So here is vedio of my chatbot in text mode and voice mode:
+
