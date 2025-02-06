@@ -46,7 +46,7 @@ if uploaded_file:
     )
     chunks = text_splitter.split_text(text_1)
     
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", credentials=credentials)
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", credentials=credentials,temperature=0.3)
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", credentials=credentials)
     vectorstore = FAISS.from_documents(documents, embeddings)
 
