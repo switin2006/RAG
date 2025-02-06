@@ -79,7 +79,7 @@ if uploaded_file:
                 - **Infer** a reasonable answer only if there is a strong logical connection to the context.  
                 - **Expand** on related concepts **only if clearly relevant**.  
                 - Otherwise, respond with:  
-                  *"I couldn’t find relevant information in the provided documents"*  
+                  *"I couldn’t find relevant information in the provided documents. However, based on my general knowledge, here’s what I can suggest."*  
                 
                 ### **Context (from documents):**  
                 {context}  
