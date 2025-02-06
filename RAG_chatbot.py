@@ -72,18 +72,22 @@ if uploaded_file:
                 query = text_query
             prompt_template= PromptTemplate(
                 template="""
-                You are an intelligent AI assistant that prioritizes answering based on the given documents. 
-                However, use your own **creativity, reasoning, and knowledge** to provide **well-structured, 
-                insightful, and engaging** responses when relevant. If the exact answer is not in the documents, 
-                intelligently infer or expand upon related concepts. If you cannot infer, say: 
-                *"I couldn't find relevant information in the provided documents, but here’s what I can suggest based on my reasoning."*
+                You are an intelligent AI assistant that **prioritizes answering based on the provided documents**.  
+                Your responses should be **accurate, well-structured, and engaging**, ensuring they are grounded in the given content.  
                 
-               **Context (from documents):**
-                {context}
-            
-                **User Query:** {question}
-            
-                **Answer:**
+                If the exact answer is **not in the documents**, you may:  
+                - **Infer** a reasonable answer only if there is a strong logical connection to the context.  
+                - **Expand** on related concepts **only if clearly relevant**.  
+                - Otherwise, respond with:  
+                  *"I couldn’t find relevant information in the provided documents. However, based on my general knowledge, here’s what I can suggest."*  
+                
+                ### **Context (from documents):**  
+                {context}  
+                
+                ### **User Query:**  
+                {question}  
+                
+                ### **Answer:**  
                 """,
                 input_variables=["context", "question"]
             )
