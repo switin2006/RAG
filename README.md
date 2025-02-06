@@ -3,8 +3,7 @@ Task Description-
 
 Here I created this RAG Chatbot using Langchain, an open-source-frame work (which basically helps us in integration of the AI models into applications)
 
-I referred the [Langchain official documentaion](https://python.langchain.com/docs/introduction/) for using it's functions and had also gone through some [Youtube vedios]
-(https://www.youtube.com/watch?v=1bUy-1hGZpI&t=126s) for getting a clear idea.
+I referred the [Langchain official documentaion](https://python.langchain.com/docs/introduction/) for using it's functions and had also gone through some [Youtube vedios](https://www.youtube.com/watch?v=1bUy-1hGZpI&t=126s) for getting a clear idea.
 
 So First we need to load data and convert it to an embedding using a vector embedding model.Here i Took the data as a input from the user and used [PyPDFLoader](https://python.langchain.com/docs/integrations/document_loaders/pypdfloader/) to load the data and the LLM i used was gemini so i used the Embedding model of the same.
 I also spitted the data into chunks using charrecter splitter from Langchain.
