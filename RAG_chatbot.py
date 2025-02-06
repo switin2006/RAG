@@ -28,7 +28,6 @@ st.markdown("""
     The AI will process your input and provide a detailed response only based upon on your document and upload only one documents 😃
     """)
 with st.sidebar:
-    
     uploaded_file = st.file_uploader("📄 Upload your PDF file (max 200 MB):", type="pdf")
 
 if uploaded_file:
