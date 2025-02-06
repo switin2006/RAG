@@ -63,9 +63,10 @@ if uploaded_file:
                 temp_audio_path = os.path.join(temp_dir, "recorded_audio.wav")
                 with open(temp_audio_path, "wb") as temp_audio_file:
                     temp_audio_file.write(audio_record.read())
-                
-                transcription = whisper.load_model("small").transcribe(temp_audio_path, language="en")
-                query = transcription["text"]
+            
+                with st.spinner("Processing..."):
+                    transcription = whisper.load_model("small").transcribe(temp_audio_path, language="en")
+                    query = transcription["text"]
                 st.write("🎤 You said:", query)
             else:
                 
