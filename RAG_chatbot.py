@@ -37,7 +37,7 @@ if uploaded_file:
     
     with open(temp_file_path, "wb") as temp_file:
         temp_file.write(uploaded_file.read())
-#Extracting the text from the documents
+#Extracting the text from the documents 
     documents = PyPDFLoader(temp_file_path).load()
     text_1 = "\n".join([doc.page_content for doc in documents])
     #Creating chunks and converting tthem into doc object (to be passable to FIASS)
@@ -49,8 +49,9 @@ if uploaded_file:
     doc_chunks = [Document(page_content=chunk) for chunk in chunks]
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", credentials=credentials)
     embeddings = GoogleGenerativeAIEmbeddings(model="text-embedding-004", credentials=credentials)
+    #storing the documents as embeddings in FIASS
     vectorstore = FAISS.from_documents(doc_chunks, embeddings)
-
+#creating a form for taking inputs from the user
     with st.form("my_form"):
         st.markdown("### 🎤 Record Your Message or Type Your Query(Do only one)")
         audio_record = st.audio_input("🎙️ Record your message:")
@@ -71,7 +72,7 @@ if uploaded_file:
             else:
                 
                 query = text_query
-            
+            #Using prompt Template
             prompt_template= PromptTemplate(
                     template="""
                    You are an intelligent AI assistant that prioritizes answering based on the provided documents.  
