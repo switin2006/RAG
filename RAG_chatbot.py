@@ -14,22 +14,22 @@ import asyncio
 import json
 from IPython.display import Audio
 import edge_tts
-# Suppress warnings
+# used to supress warnings
 warnings.filterwarnings("ignore", category=UserWarning, message="Examining the path of torch.classes raised.*")
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
-# Set credentials
+# Setting up the environment
 json_content = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
 credentials = service_account.Credentials.from_service_account_info(json.loads(json_content))
 
-st.title("📚 Gemini AI Assistant")
+st.title("📚 DocGenie")
 st.markdown("""
-    Welcome to the Gemini AI Assistant! Upload a PDF document, and you can either type your query or record an audio message. 
-    The AI will process your input and provide a detailed response only based upon on your document and upload only one documents 😃
+    Welcome to the Document Assistant! Upload a PDF document, and you can either type your query or record an audio message. 
+    The AI will process your input and provide a detailed response only based upon on your document and upload only one document 😃
     """)
 
 uploaded_file = st.file_uploader("📄 Upload your PDF file (max 200 MB):", type="pdf")
-
+#Creating temp file to get the path of the 
 if uploaded_file:
     temp_dir = tempfile.gettempdir()
     temp_file_path = os.path.join(temp_dir, uploaded_file.name)
