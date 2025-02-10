@@ -48,13 +48,7 @@ if uploaded_file:
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", credentials=credentials,temperature=0.3)
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", credentials=credentials)
     vectorstore = FAISS.from_documents(doc_chunks, embeddings)
-        
-        
-        
-   
-
-    
-        with st.form("my_form"):
+with st.form("my_form"):
             st.markdown("### 🎤 Record Your Message or Type Your Query(Do only one)")
             audio_record = st.audio_input("🎙 Record your message:")
             text_query = st.text_area("✍ Or type your query here:")
