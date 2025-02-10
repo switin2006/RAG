@@ -19,6 +19,8 @@ Later My main focus was on Adding the voice features in the model so i used Whis
 
 So I loaded the small model from Whisper since if i was loading the medium or higher my streamlit app was getting timed out and it appeared to be pretty fine.
 
+I also used the tempfile function for storing the file temperarliy while running it.
+
 Later when my base code was ready I tried integrating it Streamlit by taking use of GPT and referring it's documentaion.
 
 I also checked the responses by varying the chunck paramerter and modifying the prompt template 
