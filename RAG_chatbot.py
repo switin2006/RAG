@@ -48,7 +48,7 @@ if uploaded_file:
     chunks = text_splitter.split_text(text_1)
     doc_chunks = [Document(page_content=chunk) for chunk in chunks]
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", credentials=credentials)
-    embeddings = GoogleGenerativeAIEmbeddings(model="model="text-embedding-001", credentials=credentials)
+    embeddings = GoogleGenerativeAIEmbeddings(model="text-embedding-001", credentials=credentials)
     #storing the documents as embeddings in FIASS
     vectorstore = FAISS.from_documents(doc_chunks, embeddings)
 #creating a form for taking inputs from the user
