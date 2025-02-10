@@ -8,7 +8,8 @@ I referred the [Langchain official documentaion](https://python.langchain.com/do
 So First we need to load data and convert it to an embedding using a vector embedding model.Here i Took the data as a input from the user and used [PyPDFLoader](https://python.langchain.com/docs/integrations/document_loaders/pypdfloader/) to load the data and the LLM i used was gemini so i used the Embedding model of the Hugging Faces.
 
 i Strruggeled a lot while using the GOOGLE enbeddings model Later i changed to hugging faces Sentence transformer.
-I also spitted the data into chunks using charrecter splitter from Langchain.
+
+I also splitted the data into chunks using charrecter splitter from Langchain.
 
 In the Later Part of the code i used [FIASS](https://engineering.fb.com/2017/03/29/data-infrastructure/faiss-a-library-for-efficient-similarity-search/) method to create vector store of the data loaded and used the similarity search with adding appropraite threshold value to retrieve the relavent documents 
 based upon the query.
