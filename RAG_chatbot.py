@@ -22,7 +22,7 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 json_content = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
 credentials = service_account.Credentials.from_service_account_info(json.loads(json_content))
 
-st.title("📚 Gemini AI Assistant")
+st.title("📚DocuGenie")
 st.markdown("""
     Welcome to the Gemini AI Assistant! Upload a PDF document, and you can either type your query or record an audio message. 
     The AI will process your input and provide a detailed response only based upon on your document and upload only one document 😃
