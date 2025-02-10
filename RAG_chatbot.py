@@ -82,7 +82,13 @@ if uploaded_file:
                     - Infer a reasonable answer only if there is a strong logical connection to the context.  
                     - Expand on related concepts only if clearly relevant.  
                     - Otherwise, answer using general knowledge** respond with:  
-                      "I couldn’t find relevant information in the provided documents. However, based on my general knowledge, here’s what I can suggest."  
+                      "I couldn’t find relevant information in the provided documents. However, based on my general knowledge, here’s what I can suggest."
+                      - Highlight technical terms in *bold*
+                      
+                    - Use bullet points for steps
+                    - If uncertain, state confidence level (80% confident...)
+
+            Now complete the analysis
                     
                     ### Context (from documents):  
                     {context}  
