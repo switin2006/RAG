@@ -25,7 +25,7 @@ credentials = service_account.Credentials.from_service_account_info(json.loads(j
 st.title("📚 Gemini AI Assistant")
 st.markdown("""
     Welcome to the Gemini AI Assistant! Upload a PDF document, and you can either type your query or record an audio message. 
-    The AI will process your input and provide a detailed response only based upon on your document and upload only one documents 😃
+    The AI will process your input and provide a detailed response only based upon on your document and upload only one document 😃
     """)
 
 uploaded_file = st.file_uploader("📄 Upload your PDF file (max 200 MB):", type="pdf")
