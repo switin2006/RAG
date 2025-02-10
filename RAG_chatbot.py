@@ -15,45 +15,56 @@ import asyncio
 import json
 from IPython.display import Audio
 import edge_tts
-# used to supress warnings
+
+# Suppress warnings
 warnings.filterwarnings("ignore", category=UserWarning, message="Examining the path of torch.classes raised.*")
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
-# Setting up the environment
+# Setting up Google credentials
 json_content = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
 credentials = service_account.Credentials.from_service_account_info(json.loads(json_content))
 
 st.title("📚 DocGenie")
 st.markdown("""
     Welcome to the Document Assistant! Upload a PDF document, and you can either type your query or record an audio message. 
-    The AI will process your input and provide a detailed response only based upon on your document and upload only one document 😃
-    """)
-#Creating a file Uploader
+    The AI will process your input and provide a detailed response based only on your document. Upload only one document 😃
+""")
+
+# File uploader
 uploaded_file = st.file_uploader("📄 Upload your PDF file (max 200 MB):", type="pdf")
-#Creating temp file to get the path of the Uploaded document since we don't know where is it stored during the run.
+
+# Ensure the file is saved correctly
 if uploaded_file:
-    temp_dir = tempfile.gettempdir()
-    temp_file_path = os.path.join(temp_dir, uploaded_file.name)
-    
-    with open(temp_file_path, "wb") as temp_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
         temp_file.write(uploaded_file.read())
-#Extracting the text from the documents 
+        temp_file_path = temp_file.name  # Get the actual file path
+
+    # Extract text from the PDF
     documents = PyPDFLoader(temp_file_path).load()
-    text_1 = "\n".join([doc.page_content for doc in documents])
-    #Creating chunks and converting tthem into doc object (to be passable to FIASS)
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=50
-    )
-    chunks = text_splitter.split_text(text_1)
+    text_content = "\n".join([doc.page_content for doc in documents])
+
+    # Chunking text for FAISS processing
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    chunks = text_splitter.split_text(text_content)
     doc_chunks = [Document(page_content=chunk) for chunk in chunks]
+
+    # Initialize AI models
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", credentials=credentials)
     embeddings = GoogleGenerativeAIEmbeddings(model="text-embedding-004", credentials=credentials)
-    #storing the documents as embeddings in FIASS
-    vectorstore = FAISS.from_documents(doc_chunks, embeddings)
-#creating a form for taking inputs from the user
-    with st.form("my_form"):
-        st.markdown("### 🎤 Record Your Message or Type Your Query(Do only one)")
+
+    # FAISS storage path
+    faiss_index_path = os.path.join(tempfile.gettempdir(), "faiss_index")
+
+    # Check if FAISS index already exists
+    if os.path.exists(faiss_index_path):
+        vectorstore = FAISS.load_local(faiss_index_path, embeddings)
+    else:
+        vectorstore = FAISS.from_documents(doc_chunks, embeddings)
+        vectorstore.save_local(faiss_index_path)
+
+    # Form for user input
+    with st.form("query_form"):
+        st.markdown("### 🎤 Record Your Message or Type Your Query (Do only one)")
         audio_record = st.audio_input("🎙️ Record your message:")
         text_query = st.text_area("✍️ Or type your query here:")
         submitted = st.form_submit_button("🚀 Submit")
@@ -61,8 +72,8 @@ if uploaded_file:
     if submitted:
         try:
             if audio_record:
-                # Handle audio input
-                temp_audio_path = os.path.join(temp_dir, "recorded_audio.wav")
+                # Save and transcribe audio
+                temp_audio_path = os.path.join(tempfile.gettempdir(), "recorded_audio.wav")
                 with open(temp_audio_path, "wb") as temp_audio_file:
                     temp_audio_file.write(audio_record.read())
                 
@@ -70,11 +81,11 @@ if uploaded_file:
                 query = transcription["text"]
                 st.write("🎤 You said:", query)
             else:
-                
                 query = text_query
-            #Using prompt Template
-            prompt_template= PromptTemplate(
-                    template="""
+
+            # AI Query Processing
+            prompt_template = PromptTemplate(
+                template="""
                    You are an intelligent AI assistant that prioritizes answering based on the provided documents.  
                     Your responses should be accurate, well-structured, and engaging, ensuring they are grounded in the given content.  
                     
@@ -98,9 +109,8 @@ if uploaded_file:
                     
                     ### Answer:  
                     """
-                )
+            )
 
-           
             retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
             qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever)
             response = qa_chain.invoke(query)
@@ -109,10 +119,9 @@ if uploaded_file:
             st.markdown("### 🤖 Generated Response:")
             st.write(response["result"])
 
-            # Text-to-speech conversion
+            # Text-to-Speech (TTS) Output
             if "result" in response:
-                text = response["result"]
-                text = text.replace("**", " ").replace("*", " ").replace("_", " ")
+                text = response["result"].replace("**", " ").replace("*", " ").replace("_", " ")
                 
                 VOICE = "en-US-ChristopherNeural"
                 RATE = "+10%"
@@ -120,17 +129,18 @@ if uploaded_file:
 
                 async def generate_speech():
                     communicate = edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH)
-                    await communicate.save("human_like_audio.mp3")
+                    await communicate.save("response_audio.mp3")
 
                 try:
                     asyncio.run(generate_speech())
-                    if os.path.exists("human_like_audio.mp3"):
-                        st.audio("human_like_audio.mp3", autoplay=False)
+                    if os.path.exists("response_audio.mp3"):
+                        st.audio("response_audio.mp3", autoplay=False)
                 except Exception as e:
                     st.error(f"Error generating speech: {e}")
 
         except Exception as e:
             st.error(f"❌ An error occurred: {e}")
+
                         
                   
            
