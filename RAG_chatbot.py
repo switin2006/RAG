@@ -28,9 +28,7 @@ st.markdown("""
     Welcome to the Document Genie ! Upload a PDF document, and you can either type your query or record an audio message. 
     The AI will process your input and provide a detailed response only based upon on your document and upload only one document 😃
     """)
-
 uploaded_files = st.file_uploader("📄 Upload your PDF files (max 200 MB each):", type="pdf", accept_multiple_files=True)
-
 
 if uploaded_files:
     if st.button("Confirm and Process Files"):
@@ -68,84 +66,83 @@ if uploaded_files:
         
         # Notify the user that processing is complete
         st.success("All PDFs have been processed and added to the vector store!")
-    else:
-        st.info("Please confirm the upload to process the files.")
+   
 else:
     st.warning("No files uploaded yet.")
-
-    with st.form("my_form"):
-        st.markdown("### 🎤 Record Your Message or Type Your Query(Do only one)")
-        audio_record = st.audio_input("🎙️ Record your message:")
-        text_query = st.text_area("✍️ Or type your query here:")
-        submitted = st.form_submit_button("🚀 Submit")
-
-    if submitted:
-        try:
-            if audio_record:
-                # Handle audio input
-                temp_audio_path = os.path.join(temp_dir, "recorded_audio.wav")
-                with open(temp_audio_path, "wb") as temp_audio_file:
-                    temp_audio_file.write(audio_record.read())
+    
+with st.form("my_form"):
+    st.markdown("### 🎤 Record Your Message or Type Your Query(Do only one)")
+    audio_record = st.audio_input("🎙️ Record your message:")
+    text_query = st.text_area("✍️ Or type your query here:")
+    submitted = st.form_submit_button("🚀 Submit")
+    
+if submitted:
+    try:
+        if audio_record:
+            # Handle audio input
+            temp_audio_path = os.path.join(temp_dir, "recorded_audio.wav")
+            with open(temp_audio_path, "wb") as temp_audio_file:
+                temp_audio_file.write(audio_record.read())
+        
+            with st.spinner("Processing..."):
+                transcription = whisper.load_model("small").transcribe(temp_audio_path, language="en")
+                query = transcription["text"]
+            st.write("🎤 You said:", query)
+        else:
             
-                with st.spinner("Processing..."):
-                    transcription = whisper.load_model("small").transcribe(temp_audio_path, language="en")
-                    query = transcription["text"]
-                st.write("🎤 You said:", query)
-            else:
-                
-                query = text_query
-            prompt_template= PromptTemplate(
-                template="""
-               You are an intelligent AI assistant that *prioritizes answering based on the provided documents*.  
-                Your responses should be *accurate, well-structured, and engaging*, ensuring they are grounded in the given content.  
-                
-                If the exact answer is *not in the documents*, you may:  
-                - *Infer* a reasonable answer only if there is a strong logical connection to the context.  
-                - *Expand* on related concepts *only if clearly relevant*.  
-                - Otherwise, answer using general knowledge** respond with:  
-                  "I couldn’t find relevant information in the provided documents. However, based on my general knowledge, here’s what I can suggest."  
-                
-                ### *Context (from documents):*  
-                {context}  
-                
-                ### *User Query:*  
-                {question}  
-                
-                ### *Answer:*  
-                """
-            )
-  
-            retriever = vectorstore.as_retriever(search_kwargs={"k": 8},similarity_score_threshold=0.7)
-            qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever,chain_type_kwargs={"prompt": prompt_template})
-            response = qa_chain.invoke(query)
+            query = text_query
+        prompt_template= PromptTemplate(
+            template="""
+           You are an intelligent AI assistant that *prioritizes answering based on the provided documents*.  
+            Your responses should be *accurate, well-structured, and engaging*, ensuring they are grounded in the given content.  
+            
+            If the exact answer is *not in the documents*, you may:  
+            - *Infer* a reasonable answer only if there is a strong logical connection to the context.  
+            - *Expand* on related concepts *only if clearly relevant*.  
+            - Otherwise, answer using general knowledge** respond with:  
+              "I couldn’t find relevant information in the provided documents. However, based on my general knowledge, here’s what I can suggest."  
+            
+            ### *Context (from documents):*  
+            {context}  
+            
+            ### *User Query:*  
+            {question}  
+            
+            ### *Answer:*  
+            """
+        )
 
-            # Display response
-            st.markdown("### 🤖 Generated Response:")
-            st.write(response["result"])
+        retriever = vectorstore.as_retriever(search_kwargs={"k": 8},similarity_score_threshold=0.7)
+        qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever,chain_type_kwargs={"prompt": prompt_template})
+        response = qa_chain.invoke(query)
 
-            # Text-to-speech conversion
-            if "result" in response:
-                text = response["result"]
-                text = text.replace("**", " ").replace("*", " ").replace("_", " ")
-                
-                VOICE = "en-US-ChristopherNeural"
-                RATE = "+10%"
-                PITCH = "+5Hz"
+        # Display response
+        st.markdown("### 🤖 Generated Response:")
+        st.write(response["result"])
 
-                async def generate_speech():
-                    communicate = edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH)
-                    await communicate.save("human_like_audio.mp3")
+        # Text-to-speech conversion
+        if "result" in response:
+            text = response["result"]
+            text = text.replace("**", " ").replace("*", " ").replace("_", " ")
+            
+            VOICE = "en-US-ChristopherNeural"
+            RATE = "+10%"
+            PITCH = "+5Hz"
 
-                try:
-                    asyncio.run(generate_speech())
-                    if os.path.exists("human_like_audio.mp3"):
-                        st.audio("human_like_audio.mp3", autoplay=False)
-                except Exception as e:
-                    st.error(f"Error generating speech: {e}")
+            async def generate_speech():
+                communicate = edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH)
+                await communicate.save("human_like_audio.mp3")
 
-        except Exception as e:
-            st.error(f"❌ An error occurred: {e}")
-                
+            try:
+                asyncio.run(generate_speech())
+                if os.path.exists("human_like_audio.mp3"):
+                    st.audio("human_like_audio.mp3", autoplay=False)
+            except Exception as e:
+                st.error(f"Error generating speech: {e}")
+
+    except Exception as e:
+        st.error(f"❌ An error occurred: {e}")
+                    
                   
            
 
