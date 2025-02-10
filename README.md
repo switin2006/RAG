@@ -11,7 +11,7 @@ I also spitted the data into chunks using charrecter splitter from Langchain.
 In the Later Part of the code i used [FIASS](https://engineering.fb.com/2017/03/29/data-infrastructure/faiss-a-library-for-efficient-similarity-search/) method to create vector store of the data loaded and used the similarity search with adding appropraite threshold value to retrieve the relavent documents 
 based upon the query.
 
-I also used a function called RetrivalQA which is an inbuilt function in Langchain which helps in reduction of lot of mannual tasks such as Converting query in embedding,searching the appropriate docs and also sending them into out LLM model.
+I also used a function called RetrivalQA which is an inbuilt function in Langchain which helps in reduction of lot of mannual tasks such as Converting query in embedding,searching the appropriate docs and also sending them into ouR LLM model.
 
 Intailly i did not gave any prompt template but later in the expermenting stage found out that giving RAG based prompts Can help us in giving good responses and Also i suggested the model to be a bit creative on topics found relavent in the docs(as per the query) and also Made to use General knowledge if the topic is completely irrelevant(But it will mention it).
 
@@ -34,7 +34,7 @@ So here is vedio of my chatbot in text mode and voice mode:
  You Can veiw the file called Speech-Mode.mp4 in this repository
 
  For running the code in your local computer-
-pip intall all the requirments and packages included in this repository
+pip intall all the requirments and packages included in this repository and run the code using streamlit command.
 
 MY deployed APP-[Chatbot](https://l8eaajcwvbluypcdkqrnjl.streamlit.app/)
  
