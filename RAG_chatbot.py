@@ -51,7 +51,7 @@ if uploaded_file:
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", credentials=credentials)
     embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     #storing the documents as embeddings in FIASS
-    vectorstore = FAISS.from_documents(doc_chunks, embeddings)
+    vectorstore = FAISS.from_documents(doc_chunks, embedding)
 #creating a form for taking inputs from the user
     with st.form("my_form"):
         st.markdown("### 🎤 Record Your Message or Type Your Query(Do only one)")
