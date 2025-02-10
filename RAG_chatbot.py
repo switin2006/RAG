@@ -29,43 +29,49 @@ st.markdown("""
     The AI will process your input and provide a detailed response only based upon on your document and upload only one document 😃
     """)
 
-uploaded_file = st.file_uploader("📄 Upload your PDF file (max 200 MB):", type="pdf",accept_multiple_files=True)
+uploaded_files = st.file_uploader("📄 Upload your PDF files (max 200 MB each):", type="pdf", accept_multiple_files=True)
+
 
 if uploaded_files:
-    all_doc_chunks = []
-    
-    for uploaded_file in uploaded_files:
-        # Save the uploaded file to a temporary location
-        temp_dir = tempfile.gettempdir()
-        temp_file_path = os.path.join(temp_dir, uploaded_file.name)
+    if st.button("Confirm and Process Files"):
+        all_doc_chunks = []
         
-        with open(temp_file_path, "wb") as temp_file:
-            temp_file.write(uploaded_file.read())
+        for uploaded_file in uploaded_files:
+            # Save the uploaded file to a temporary location
+            temp_dir = tempfile.gettempdir()
+            temp_file_path = os.path.join(temp_dir, uploaded_file.name)
+            
+            with open(temp_file_path, "wb") as temp_file:
+                temp_file.write(uploaded_file.read())
 
-        # Load and process the PDF
-        documents = PyPDFLoader(temp_file_path).load()
-        text = "\n".join([doc.page_content for doc in documents])
+            # Load and process the PDF
+            documents = PyPDFLoader(temp_file_path).load()
+            text = "\n".join([doc.page_content for doc in documents])
+            
+            # Split the text into chunks
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=1000,
+                chunk_overlap=100
+            )
+            chunks = text_splitter.split_text(text)
+            doc_chunks = [Document(page_content=chunk) for chunk in chunks]
+            
+            # Add the chunks to the list of all chunks
+            all_doc_chunks.extend(doc_chunks)
         
-        # Split the text into chunks
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=100
-        )
-        chunks = text_splitter.split_text(text)
-        doc_chunks = [Document(page_content=chunk) for chunk in chunks]
+        # Initialize the LLM and embeddings
+        llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", credentials=credentials, temperature=0.3)
+        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", credentials=credentials)
         
-        # Add the chunks to the list of all chunks
-        all_doc_chunks.extend(doc_chunks)
-    
-    # Initialize the LLM and embeddings
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", credentials=credentials, temperature=0.3)
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", credentials=credentials)
-    
-    # Create a vector store from all the document chunks
-    vectorstore = FAISS.from_documents(all_doc_chunks, embeddings)
-    
-    # Now you can use the vectorstore for further processing or querying
-    st.success("All PDFs have been processed and added to the vector store!")
+        # Create a vector store from all the document chunks
+        vectorstore = FAISS.from_documents(all_doc_chunks, embeddings)
+        
+        # Notify the user that processing is complete
+        st.success("All PDFs have been processed and added to the vector store!")
+    else:
+        st.info("Please confirm the upload to process the files.")
+else:
+    st.warning("No files uploaded yet.")
 
     with st.form("my_form"):
         st.markdown("### 🎤 Record Your Message or Type Your Query(Do only one)")
