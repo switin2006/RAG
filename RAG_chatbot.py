@@ -24,7 +24,7 @@ credentials = service_account.Credentials.from_service_account_info(json.loads(j
 
 st.title("📚DocuGenie")
 st.markdown("""
-    Welcome to the Gemini AI Assistant! Upload a PDF document, and you can either type your query or record an audio message. 
+    Welcome to the Document Genie ! Upload a PDF document, and you can either type your query or record an audio message. 
     The AI will process your input and provide a detailed response only based upon on your document and upload only one document 😃
     """)
 
