@@ -31,7 +31,11 @@ So here is vedio of my chatbot in text mode and voice mode:
  You can veiw the file called Text-Mode.mp4 in this repository
 
  Voice Mode-
- 
- 
+ You Can veiw the file called Speech-Mode.mp4 in this repository
+
+ For running the code in your local computer-
+pip intall all the requirments and packages included in this repository
+
+MY deployed APP-[Chatbot](https://l8eaajcwvbluypcdkqrnjl.streamlit.app/)
  
 
