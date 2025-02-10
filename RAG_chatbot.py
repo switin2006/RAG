@@ -5,6 +5,7 @@ from langchain_community.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.prompts import PromptTemplate
+from langchain_core.documents import Document
 import streamlit as st
 import os
 import tempfile
@@ -27,28 +28,28 @@ st.markdown("""
     Welcome to the Document Assistant! Upload a PDF document, and you can either type your query or record an audio message. 
     The AI will process your input and provide a detailed response only based upon on your document and upload only one document 😃
     """)
-
+#Creating a file Uploader
 uploaded_file = st.file_uploader("📄 Upload your PDF file (max 200 MB):", type="pdf")
-#Creating temp file to get the path of the Uploaded document
+#Creating temp file to get the path of the Uploaded document since we don't know where is it stored during the run.
 if uploaded_file:
     temp_dir = tempfile.gettempdir()
     temp_file_path = os.path.join(temp_dir, uploaded_file.name)
     
     with open(temp_file_path, "wb") as temp_file:
         temp_file.write(uploaded_file.read())
-
+#Extracting the text from the documents
     documents = PyPDFLoader(temp_file_path).load()
     text_1 = "\n".join([doc.page_content for doc in documents])
-    
+    #Creating chunks and converting tthem into doc object (to be passable to FIASS)
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
         chunk_overlap=50
     )
     chunks = text_splitter.split_text(text_1)
-    
+    doc_chunks = [Document(page_content=chunk) for chunk in chunks]
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", credentials=credentials)
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", credentials=credentials)
-    vectorstore = FAISS.from_documents(documents, embeddings)
+    embeddings = GoogleGenerativeAIEmbeddings(model="text-embedding-004", credentials=credentials)
+    vectorstore = FAISS.from_documents(doc_chunks, embeddings)
 
     with st.form("my_form"):
         st.markdown("### 🎤 Record Your Message or Type Your Query(Do only one)")
