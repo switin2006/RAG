@@ -6,6 +6,7 @@ from langchain.chains import RetrievalQA
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.prompts import PromptTemplate
 from langchain_core.documents import Document
+from langchain.embeddings import HuggingFaceEmbeddings
 import streamlit as st
 import os
 import tempfile
@@ -48,7 +49,7 @@ if uploaded_file:
     chunks = text_splitter.split_text(text_1)
     doc_chunks = [Document(page_content=chunk) for chunk in chunks]
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", credentials=credentials)
-    embeddings = GoogleGenerativeAIEmbeddings(model="text-embedding-004", credentials=credentials)
+    embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     #storing the documents as embeddings in FIASS
     vectorstore = FAISS.from_documents(doc_chunks, embeddings)
 #creating a form for taking inputs from the user
