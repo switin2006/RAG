@@ -29,7 +29,7 @@ st.markdown("""
     """)
 
 uploaded_file = st.file_uploader("📄 Upload your PDF file (max 200 MB):", type="pdf")
-#Creating temp file to get the path of the 
+#Creating temp file to get the path of the Uploaded document
 if uploaded_file:
     temp_dir = tempfile.gettempdir()
     temp_file_path = os.path.join(temp_dir, uploaded_file.name)
