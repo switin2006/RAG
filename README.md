@@ -25,9 +25,13 @@ I also checked the responses by varying the chunck paramerter and modifying the 
 
 So here is vedio of my chatbot in text mode and voice mode:
 
- Context-I uploaded a file of EVS coourse
+ Context-I uploaded a file of EVS course
  
  Text Mode:
+ You can veiw the file called Text-Mode.mp4 in this repository
+
+ Voice Mode-
+ 
  
  
 
