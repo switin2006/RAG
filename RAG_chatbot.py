@@ -102,7 +102,7 @@ if uploaded_file:
                 )
 
            
-            retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+            retriever = vectorstore.as_retriever(search_kwargs={"k": 8},similarity_score_threshold=0.7)
             qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever)
             response = qa_chain.invoke(query)
 
