@@ -15,6 +15,7 @@ import asyncio
 import json
 from IPython.display import Audio
 import edge_tts
+
 # Suppress warnings
 warnings.filterwarnings("ignore", category=UserWarning, message="Examining the path of torch.classes raised.*")
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -25,13 +26,13 @@ credentials = service_account.Credentials.from_service_account_info(json.loads(j
 
 st.title("📚DocuGenie")
 st.markdown("""
-    Welcome to the Document Genie ! Upload a PDF document, and you can either type your query or record an audio message. 
-    The AI will process your input and provide a detailed response only based upon on your document and upload only one document 😃
+    Welcome to the Document Genie! Upload a PDF document, and you can either type your query or record an audio message. 
+    The AI will process your input and provide a detailed response based only upon your document. Please upload only one document. 😃
     """)
+
 uploaded_files = st.file_uploader("📄 Upload your PDF files (max 200 MB each):", type="pdf", accept_multiple_files=True)
 
 if uploaded_files:
-    
     if st.button("Confirm and Process Files"):
         all_doc_chunks = []
         
@@ -65,15 +66,17 @@ if uploaded_files:
         # Create a vector store from all the document chunks
         vectorstore = FAISS.from_documents(all_doc_chunks, embeddings)
         
+        # Store the vectorstore in session state
+        st.session_state.vectorstore = vectorstore
+        
         # Notify the user that processing is complete
         st.success("All PDFs have been processed and added to the vector store!")
-        
-   
 
-    
+# Check if the vectorstore exists in session state
+if "vectorstore" in st.session_state:
     with st.form("my_form"):
-        st.markdown("### 🎤 Record Your Message or Type Your Query(Do only one)")
-        audio_record = st.audio_input("🎙️ Record your message:")
+        st.markdown("### 🎤 Record Your Message or Type Your Query (Do only one)")
+        audio_record = st.audio_input("🎙️ Upload your audio message:")
         text_query = st.text_area("✍️ Or type your query here:")
         submitted = st.form_submit_button("🚀 Submit")
         
@@ -81,7 +84,7 @@ if uploaded_files:
         try:
             if audio_record:
                 # Handle audio input
-                temp_audio_path = os.path.join(temp_dir, "recorded_audio.wav")
+                temp_audio_path = os.path.join(tempfile.gettempdir(), "recorded_audio.wav")
                 with open(temp_audio_path, "wb") as temp_audio_file:
                     temp_audio_file.write(audio_record.read())
             
@@ -90,11 +93,11 @@ if uploaded_files:
                     query = transcription["text"]
                 st.write("🎤 You said:", query)
             else:
-                
                 query = text_query
-            prompt_template= PromptTemplate(
+
+            prompt_template = PromptTemplate(
                 template="""
-               You are an intelligent AI assistant that *prioritizes answering based on the provided documents*.  
+                You are an intelligent AI assistant that *prioritizes answering based on the provided documents*.  
                 Your responses should be *accurate, well-structured, and engaging*, ensuring they are grounded in the given content.  
                 
                 If the exact answer is *not in the documents*, you may:  
@@ -112,15 +115,17 @@ if uploaded_files:
                 ### *Answer:*  
                 """
             )
-    
-            retriever = vectorstore.as_retriever(search_kwargs={"k": 8},similarity_score_threshold=0.7)
-            qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever,chain_type_kwargs={"prompt": prompt_template})
+
+            # Retrieve the vectorstore from session state
+            vectorstore = st.session_state.vectorstore
+            retriever = vectorstore.as_retriever(search_kwargs={"k": 8}, similarity_score_threshold=0.7)
+            qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever, chain_type_kwargs={"prompt": prompt_template})
             response = qa_chain.invoke(query)
-    
+
             # Display response
             st.markdown("### 🤖 Generated Response:")
             st.write(response["result"])
-    
+
             # Text-to-speech conversion
             if "result" in response:
                 text = response["result"]
@@ -129,20 +134,22 @@ if uploaded_files:
                 VOICE = "en-US-ChristopherNeural"
                 RATE = "+10%"
                 PITCH = "+5Hz"
-    
+
                 async def generate_speech():
                     communicate = edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH)
                     await communicate.save("human_like_audio.mp3")
-    
+
                 try:
                     asyncio.run(generate_speech())
                     if os.path.exists("human_like_audio.mp3"):
                         st.audio("human_like_audio.mp3", autoplay=False)
                 except Exception as e:
                     st.error(f"Error generating speech: {e}")
-    
+
         except Exception as e:
             st.error(f"❌ An error occurred: {e}")
+else:
+    st.warning("Please upload and process your PDF files first.")
                         
                   
            
