@@ -42,5 +42,7 @@ So here is vedio of my chatbot in text mode and voice mode:
 pip intall all the requirments and packages included in this repository and run the code using streamlit command.
 
 MY deployed APP-[Chatbot](https://l8eaajcwvbluypcdkqrnjl.streamlit.app/)
+
+Note-my deployed app is not recognising the docs from other computers so i will demostrate it in my laptop during the interview
  
 
