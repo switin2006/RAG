@@ -7,7 +7,7 @@ I referred the [Langchain official documentaion](https://python.langchain.com/do
 
 So First we need to load data and convert it to an embedding using a vector embedding model.Here i Took the data as a input from the user and used [PyPDFLoader](https://python.langchain.com/docs/integrations/document_loaders/pypdfloader/) to load the data and the LLM i used was gemini so i used the Embedding model of the Hugging Faces.
 
-i Strruggeled a lot while using the GOOGLE enbeddings model Later i changed to hugging faces Sentence transformer.
+i Struggeled a lot while using the GOOGLE enbeddings model Later i changed to hugging faces Sentence transformer.
 
 I also splitted the data into chunks using charrecter splitter from Langchain.
 
