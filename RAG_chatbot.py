@@ -41,7 +41,7 @@ if uploaded_file:
 #Extracting the text from the documents 
     documents = PyPDFLoader(temp_file_path).load()
     text_1 = "\n".join([doc.page_content for doc in documents])
-    #Creating chunks and converting tthem into doc object (to be passable to FIASS)
+    #Creating chunks and converting them into doc object (to be passable to FIASS)
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
         chunk_overlap=50
